@@ -1,0 +1,86 @@
+package control;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+/**
+ * Control class is responsible for making required changes to the model when a user 
+ * interacts with the GUI. It achieves this by having several classes that implement 
+ * ActionListener, and adding these to the buttons in the GUI. 
+ */
+
+import model.HangmanModel;
+import view.View;
+
+
+public class Control {
+	
+	private HangmanModel model;
+	private View view;
+	
+	
+	public Control (HangmanModel m, View v) throws IOException{
+		this.model = m;
+		this.view = v;
+		
+		
+//		view.themeOption();
+		view.bottomPanel.addQuitListener(new QuitListener());
+		view.bottomPanel.addNewWordListener(new NewWordListener());
+		view.leftPanel.addGuessListener(new GuessListener());
+		
+		
+	}
+	class NewWordListener implements ActionListener{
+		public NewWordListener(){}
+		@Override
+		public void actionPerformed(ActionEvent e){
+			
+			try {
+				view.reset();
+				
+			} catch (IOException e1) {
+				
+				e1.printStackTrace();
+			}
+			
+		}
+	}
+	
+	class GuessListener implements ActionListener{
+		public GuessListener(){}
+		
+		@Override
+		public void actionPerformed(ActionEvent e){
+			try {
+				view.leftPanel.tryGuess(model);
+				view.leftPanel.updateInfo(model);
+				view.leftPanel.repaint();
+				view.rightPanel.updateInfo(model);
+				view.rightPanel.repaint();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+		}
+	}
+	
+		class QuitListener implements ActionListener {
+			
+			public QuitListener(){}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int option = JOptionPane.showConfirmDialog(null, (new JLabel("Are you sure you want to quit?")),
+						"Quit", JOptionPane.YES_NO_OPTION);
+				if( option == JOptionPane.YES_OPTION ){
+					System.exit(0);
+					
+				}
+			}
+		}
+}
