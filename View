@@ -1,0 +1,95 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+// import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import model.HangmanModel;
+
+
+public class View extends JFrame{
+	
+	/**
+	 * 
+	 * View is the class which should handle all graphical output. It has a model and 
+	 * responds to any changes in the model with required graphical changes.
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public BottomPanel bottomPanel;
+	public LeftPanel leftPanel;
+	public RightPanel rightPanel;
+	private HangmanModel m;
+	public String fileName;
+	
+	public void setRightPanel(RightPanel rightPanel ){
+		this.rightPanel = rightPanel;
+	}
+
+	public View(HangmanModel model) throws IOException{
+		this.m = model;	
+	this.bottomPanel = new BottomPanel();
+	this.leftPanel = new LeftPanel();
+	this.rightPanel = new RightPanel(m);
+	this.setTitle("Hangman");
+	this.setSize(700, 450);
+	this.setLocationRelativeTo(null);
+	this.addWindowListener(new WindowAdapter() {
+		public void windowClosing(WindowEvent e){
+			System.exit(0);
+		}
+	});
+	
+	
+	
+	JPanel panel = new JPanel();
+	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+	panel.add(bottomPanel);
+	this.getContentPane().add(panel,BorderLayout.SOUTH);
+	this.getContentPane().add(rightPanel, BorderLayout.EAST);
+	leftPanel.updateInfo(m);
+	this.getContentPane().add(leftPanel, BorderLayout.WEST);
+	}
+	
+	
+		
+	public void reset() throws IOException{
+		m.initialise();
+		leftPanel.numGuesses.setText(m.getNumGuesses());
+		leftPanel.hiddenWord.setText(m.getBlanks());
+		leftPanel.wrongGuesses.setText(m.getWrongGuesses());
+		leftPanel.letters.setText(m.getLetters());
+		rightPanel.updateInfo(m);
+		rightPanel.repaint();
+		Frame.getFrames();
+		
+		
+	}
+//	
+//	public void themeOption() {
+//		Object[] options = {"Movies",
+//                "Animals",
+//                "Random"};
+//			int n = JOptionPane.showOptionDialog(this,
+//						"Which theme would you like? ",
+//								"Theme choice",
+//								JOptionPane.YES_NO_CANCEL_OPTION,
+//								JOptionPane.QUESTION_MESSAGE,
+//								null,
+//								options,
+//								options[2]);
+//			if ( n == JOptionPane.NO_OPTION){
+//		
+//			}
+//	
+//
+//	}
+	
+}
