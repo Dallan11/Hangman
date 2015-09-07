@@ -1,0 +1,162 @@
+package view;
+
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
+import model.HangmanModel;
+
+public class LeftPanel extends JPanel{
+	/**
+	 *
+	 * Panel of the left hand side of the GUI containing a button. Controller will
+	 * add the ActionListener's it needs to respond to these buttons.
+	 * Also responsible for displaying the information panel on the left hand side
+	 * of the GUI. Has update methods that are called from View when this information 
+	 * changes.
+	 * 
+	 * 
+	 */
+	 
+	private static final long serialVersionUID = 1L;
+	JButton guess;
+	JLabel letters;
+	JLabel wrongGuessesLabel;
+	JLabel wrongGuesses;
+	JLabel numGuessesLabel;
+	JLabel numGuesses;
+	JLabel hiddenWord;
+	private JTextField guessEntry;
+	static JLabel unguessedLettersTitle = new JLabel("Ungessed Letters");
+	
+
+	public LeftPanel() {
+		this.setLayout(new FlowLayout() );
+		this.setPreferredSize(new Dimension (400, 400));
+
+		
+		JPanel guessInfo = new JPanel();
+		guessInfo.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		unguessedLettersTitle.setHorizontalAlignment(JLabel.CENTER);
+		c.insets = new Insets(20,0,0,0);
+		c.gridx = 0;
+		c.gridy = 1;
+		guessInfo.add(unguessedLettersTitle, c);
+		
+		this.letters = new JLabel();
+		this.letters.setHorizontalAlignment(JLabel.CENTER);
+		c.gridx = 0;
+		c.gridy=2;
+		guessInfo.add(letters, c);
+		
+		guessEntry = new JTextField(10);
+		c.gridx = 0;
+		c.gridy =4;
+		c.gridwidth=1;
+		guessInfo.add(guessEntry, c);
+		
+		
+		guess = new JButton("Guess");
+		c.gridx = 0;
+		c.gridy = 5;
+		guessInfo.add(guess, c);
+		
+		hiddenWord = new JLabel();
+		c.gridx = 0;
+		c.gridy = 7;
+		guessInfo.add(hiddenWord, c);
+		
+		wrongGuessesLabel = new JLabel("Wrong guesses");
+		c.gridx = 0;
+		c.gridy = 9;
+		guessInfo.add(wrongGuessesLabel, c);
+		wrongGuesses = new JLabel();
+		c.gridx = 0;
+		c.gridy = 10;
+		guessInfo.add(wrongGuesses, c);
+
+		numGuessesLabel = new JLabel("Number of guesses");
+		c.gridx = 0;
+		c.gridy = 11;
+		guessInfo.add(numGuessesLabel, c);
+		numGuesses = new JLabel ();
+		c.gridx = 0;
+		c.gridy = 12;
+		guessInfo.add(numGuesses, c);
+		
+		
+		guessInfo.add(Box.createRigidArea(new Dimension(6,0)));
+		this.add(guessInfo);
+}
+	
+	
+	public void tryGuess(HangmanModel model) throws IOException{
+		
+		
+		String guessedLetter = guessEntry.getText();
+		if(model.availableLetter(guessedLetter)==false){
+			JOptionPane.showMessageDialog(this, "You already guessed that letter");
+			guessEntry.setText("");
+			guessEntry.requestFocusInWindow();
+		}
+		else if((guessedLetter.length()==1)&& (model.availableLetter(guessedLetter))){	
+		try { 
+			model.guessLetter(guessedLetter);
+	
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		guessEntry.setText("");
+		guessEntry.requestFocusInWindow();
+		
+		
+		}
+	}
+	public void updateInfo(HangmanModel model){
+		hiddenWord.setText(model.expandHiddenPhrase(model.getBlanks()));
+		letters.setText(model.getLetters());
+		wrongGuesses.setText(model.getWrongGuesses());
+		numGuesses.setText(model.getNumGuesses());
+		
+		if(model.hanged()){
+			JOptionPane.showMessageDialog(this, "Hanged! The word was \n"
+					+model.getCurrentWord());
+			
+		}
+			else if(model.wordGuessed()){
+				JOptionPane.showMessageDialog(this, "You guessed the word!\n Score: "+ ((model.getWordLength()*+10)-model.getNumWrongGuesses()));
+			}	
+	}
+	public void addGuessListener(ActionListener a){
+		guess.addActionListener(a);
+		guess.registerKeyboardAction(guess
+                .getActionForKeyStroke(KeyStroke.getKeyStroke(
+                        KeyEvent.VK_SPACE, 0, false)), KeyStroke.getKeyStroke(
+                KeyEvent.VK_ENTER, 0, false), JButton.WHEN_IN_FOCUSED_WINDOW);
+        guess.registerKeyboardAction(guess
+                .getActionForKeyStroke(KeyStroke.getKeyStroke(
+                        KeyEvent.VK_SPACE, 0, true)), KeyStroke.getKeyStroke(
+                KeyEvent.VK_ENTER, 0, true), JButton.WHEN_IN_FOCUSED_WINDOW);
+
+	}
+	
+	
+			
+			
+			
+	
+	}
