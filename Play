@@ -1,0 +1,46 @@
+package playHangman;
+import java.io.IOException;
+
+import javax.swing.SwingUtilities;
+
+import control.Control;
+import model.HangmanModel;
+import view.View;
+
+
+public class Play {
+	
+	public static void main(String[] args) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@SuppressWarnings("unused")
+				public void run() {
+					HangmanModel model = new HangmanModel();	
+				try {
+							
+							model.initialise();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}	
+				try {	
+					View view = new View(model);
+					
+						view.setVisible(true);
+						Control controller = new Control(model, view);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+				
+						
+					
+						
+					
+				
+					
+					
+
+}
+});
+}
+}
+
